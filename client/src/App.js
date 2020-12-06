@@ -1,12 +1,29 @@
 import React from 'react';
-import { Counter } from './features/counter/Counter';
+import { makeStyles } from '@material-ui/core/styles';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
 
-function App() {
+const useStyles = makeStyles({
+  root: {
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto',
+  },
+});
+
+const App = () => {
+  const classes = useStyles();
+
   return (
-    <div>
-      <Counter />
-    </div>
+    <Router>
+      <div className={classes.root}>
+        <main>
+          <Route path="/" exact component={LoginScreen} />
+          <Route path="/register" exact component={RegisterScreen} />
+        </main>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
