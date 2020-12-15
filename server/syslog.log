@@ -1,0 +1,75 @@
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T20:55:00.682Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T20:55:08.806Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:01:28.457Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:09:03.989Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:10:16.158Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:11:01.430Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:11:39.299Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:13:39.922Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:14:07.482Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:24:09.152Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:26:28.069Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:36:51.147Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:37:22.879Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T21:37:52.109Z'
+}
+{
+  message: 'Server running in dev mode on port 5000!',
+  level: 'info',
+  timestamp: '2020-12-15T22:02:02.259Z'
+}

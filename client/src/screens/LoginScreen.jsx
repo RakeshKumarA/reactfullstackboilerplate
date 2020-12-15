@@ -13,7 +13,7 @@ import { CircularProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 //Modular imports
-import { login } from "../reducers/userSlice";
+import { login, user_login_failure_cleanup } from "../reducers/userSlice";
 
 //Form Validation Libs
 import { useForm } from "react-hook-form";
@@ -60,7 +60,10 @@ const LoginScreen = () => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
       history.push(redirect);
     }
-  }, [history, userInfo, redirect]);
+    return () => {
+      dispatch(user_login_failure_cleanup());
+    };
+  }, [history, userInfo, redirect, dispatch]);
 
   const onClickHandler = (data) => {
     const { email, password } = data;
@@ -72,8 +75,6 @@ const LoginScreen = () => {
       <Grid item xs={1} sm={4} />
       {loading ? (
         <CircularProgress />
-      ) : error ? (
-        <Alert severity="error">{error}</Alert>
       ) : (
         <Grid item xs={10} sm={4} container direction="column" spacing={1}>
           <Grid item>
@@ -81,6 +82,11 @@ const LoginScreen = () => {
               SIGN IN
             </Typography>
           </Grid>
+          {error ? (
+            <Grid item>
+              <Alert severity="error">{error}</Alert>
+            </Grid>
+          ) : null}
           <Grid item>
             <Typography variant="subtitle1" color="initial">
               Email Address
@@ -133,7 +139,6 @@ const LoginScreen = () => {
           </Grid>
         </Grid>
       )}
-
       <Grid item xs={1} sm={4} />
     </Grid>
   );

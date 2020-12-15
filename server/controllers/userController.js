@@ -1,7 +1,7 @@
-const db = require('../db');
+const db = require("../db");
 
-const bcrypt = require('bcryptjs');
-const generateToken = require('../utils/generateToken');
+const bcrypt = require("bcryptjs");
+const generateToken = require("../utils/generateToken");
 
 // @desc		Auth User and get token
 // @route 	POST /api/users/login
@@ -11,7 +11,8 @@ const authUser = async (req, res) => {
   try {
     const user = await db.query(`SELECT * FROM users where email='${email}'`);
 
-    if (user) {
+    if (user.rowCount !== 0) {
+      console.log(user);
       const pwdInDb = await db.query(
         `SELECT password FROM users WHERE email = '${email}'`
       );
@@ -20,6 +21,7 @@ const authUser = async (req, res) => {
       bcrypt.compare(password, pwdhash, function (err, result) {
         if (result) {
           res.json({
+            status: 200,
             id: user.rows[0].id,
             email: user.rows[0].email,
             name: user.rows[0].name,
@@ -27,9 +29,11 @@ const authUser = async (req, res) => {
             token: generateToken(user.rows[0].id),
           });
         } else {
-          res.json({ message: 'Password Incorrect' });
+          res.json({ status: 401, message: "Password Incorrect" });
         }
       });
+    } else {
+      res.json({ status: 401, message: "Email not Present" });
     }
   } catch (error) {
     res.status(401).json({ message: error.message });
@@ -42,16 +46,16 @@ const authUser = async (req, res) => {
 const registerUser = async (req, res) => {
   const { name, email, password, isadmin } = req.body;
 
-  const user = await db.query('SELECT * FROM users where email=$1', [email]);
+  const user = await db.query("SELECT * FROM users where email=$1", [email]);
 
   if (user.rowCount !== 0) {
-    return res.status(401).json({ message: 'User Already Exists' });
+    return res.json({ status: 401, message: "User Already Exists" });
   }
 
   try {
     if (isadmin) {
       const results = await db.query(
-        'INSERT INTO users (name, email, password, isAdmin) values ($1, $2, $3, $4) returning *',
+        "INSERT INTO users (name, email, password, isAdmin) values ($1, $2, $3, $4) returning *",
         [name, email, bcrypt.hashSync(password, 10), isadmin]
       );
       const token = generateToken(results.rows[0].id);
@@ -64,7 +68,7 @@ const registerUser = async (req, res) => {
       });
     } else {
       const results = await db.query(
-        'INSERT INTO users (name, email, password) values ($1, $2, $3) returning *',
+        "INSERT INTO users (name, email, password) values ($1, $2, $3) returning *",
         [name, email, bcrypt.hashSync(password, 10)]
       );
       const token = generateToken(results.rows[0].id);
