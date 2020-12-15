@@ -1,34 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Spacer from 'react-add-space';
-import { useDispatch, useSelector } from 'react-redux';
-import { CircularProgress } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import { register } from '../reducers/registerSlice';
+import React, { useEffect } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Spacer from "react-add-space";
+
+//MUI Libs
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+
+//Modular imports
+import { registerUser } from "../reducers/registerSlice";
+
+//Form Validation Libs
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: '60vh',
+    minHeight: "60vh",
   },
   title: {
-    marginTop: '5vh',
+    marginTop: "5vh",
   },
   linkdeco: {
-    textDecoration: 'none',
+    textDecoration: "none",
   },
 }));
 
+//Form Validation Schema
+const schema = yup.object().shape({
+  email: yup.string().required("Email required").email("Not a Valid Email"),
+  password: yup
+    .string()
+    .required("Please Enter your password")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+    ),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
+  name: yup
+    .string()
+    .required("First Name Required")
+    .max(8, "Maximum 8 Characters"),
+});
+
 const RegisterScreen = () => {
   const classes = useStyles();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { register, handleSubmit, errors } = useForm({
+    mode: "onBlur",
+    resolver: yupResolver(schema),
+  });
 
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.user);
@@ -36,7 +64,9 @@ const RegisterScreen = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const redirect = location.search ? location.search.split('=')[1] : '/';
+  const redirect = location.search
+    ? location.search.split("=")[1]
+    : "/dashboard";
 
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
@@ -44,9 +74,9 @@ const RegisterScreen = () => {
     }
   }, [history, userInfo, redirect]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(register(name, email, password));
+  const onClickHandler = (data) => {
+    const { name, email, password } = data;
+    dispatch(registerUser(name, email, password));
   };
 
   return (
@@ -68,14 +98,14 @@ const RegisterScreen = () => {
               Name
             </Typography>
             <TextField
+              name="name"
               label="Enter Name"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
+              size={"small"}
+              inputRef={register}
+              error={!!errors.name}
+              helperText={errors?.name?.message}
             />
           </Grid>
           <Grid item>
@@ -83,14 +113,15 @@ const RegisterScreen = () => {
               Email Address
             </Typography>
             <TextField
+              name="email"
               label="Enter Email"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              size={"small"}
+              inputRef={register}
+              type="email"
+              error={!!errors.email}
+              helperText={errors?.email?.message}
             />
           </Grid>
 
@@ -99,15 +130,15 @@ const RegisterScreen = () => {
               Password
             </Typography>
             <TextField
+              name="password"
               label="Enter Password"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={password}
+              size={"small"}
               type="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              inputRef={register}
+              error={!!errors.password}
+              helperText={errors?.password?.message}
             />
           </Grid>
           <Grid item>
@@ -115,26 +146,30 @@ const RegisterScreen = () => {
               Confirm Password
             </Typography>
             <TextField
+              name="confirmPassword"
               label="Confirm Password"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={confirmPassword}
+              size={"small"}
               type="password"
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
+              inputRef={register}
+              error={!!errors.confirmPassword}
+              helperText={errors?.confirmPassword?.message}
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit((data) => onClickHandler(data))}
+            >
               REGISTER
             </Button>
           </Grid>
           <Grid item>
             <Typography variant="subtitle1" color="initial">
               Already Registered? <Spacer amount={2} />
-              <Link to="/login" className={classes.linkdeco}>
+              <Link to="/" className={classes.linkdeco}>
                 Login
               </Link>
             </Typography>

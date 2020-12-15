@@ -1,13 +1,17 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import PageNotFound from "./screens/PageNotFound";
+import Dashboard from "./screens/Dashboard";
+import PrivateRoute from "./components/routes/PrivateRoute";
+import PublicRoute from "./components/routes/PublicRoute";
 
 const useStyles = makeStyles({
   root: {
-    display: 'grid',
-    gridTemplateRows: 'auto 1fr auto',
+    display: "grid",
+    gridTemplateRows: "auto 1fr auto",
   },
 });
 
@@ -18,8 +22,22 @@ const App = () => {
     <Router>
       <div className={classes.root}>
         <main>
-          <Route path="/" exact component={LoginScreen} />
-          <Route path="/register" exact component={RegisterScreen} />
+          <Switch>
+            <PublicRoute
+              restricted={false}
+              path="/"
+              exact
+              component={LoginScreen}
+            />
+            <PublicRoute
+              restricted={false}
+              path="/register"
+              exact
+              component={RegisterScreen}
+            />
+            <PrivateRoute path="/dashboard" exact component={Dashboard} />
+            <Route component={PageNotFound} />
+          </Switch>
         </main>
       </div>
     </Router>

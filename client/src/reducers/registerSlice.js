@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { user_login_sucess } from './userSlice';
+import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { user_login_sucess } from "./userSlice";
 
 export const registerSlice = createSlice({
-  name: 'register',
+  name: "register",
   initialState: {},
   reducers: {
     user_register_request: (state) => {
@@ -27,23 +27,23 @@ export const {
   user_register_failure,
 } = registerSlice.actions;
 
-export const register = (name, email, password) => async (dispatch) => {
+export const registerUser = (name, email, password) => async (dispatch) => {
   try {
     dispatch(user_register_request());
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     };
     const { data } = await axios.post(
-      '/api/users',
+      "/api/users",
       { name, email, password },
       config
     );
-    window.location = '/';
+    window.location = "/";
     dispatch(user_register_sucess(data));
     dispatch(user_login_sucess(data));
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatch(user_register_failure(error.message));
   }

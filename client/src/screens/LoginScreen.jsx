@@ -1,32 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Spacer from 'react-add-space';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../reducers/userSlice';
-import { CircularProgress } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import React, { useEffect } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Spacer from "react-add-space";
+
+//MUI Libs
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+
+//Modular imports
+import { login } from "../reducers/userSlice";
+
+//Form Validation Libs
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: '60vh',
+    minHeight: "60vh",
   },
   title: {
-    marginTop: '5vh',
+    marginTop: "5vh",
   },
   linkdeco: {
-    textDecoration: 'none',
+    textDecoration: "none",
   },
 }));
 
+//Form Validation Schema
+const schema = yup.object().shape({
+  email: yup.string().email("Not a Valid Email").required("Email required"),
+  password: yup.string().required("Password required"),
+});
+
 const LoginScreen = () => {
   const classes = useStyles();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.user);
@@ -34,7 +47,14 @@ const LoginScreen = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const redirect = location.search ? location.search.split('=')[1] : '/';
+  const { register, handleSubmit, errors } = useForm({
+    mode: "onBlur",
+    resolver: yupResolver(schema),
+  });
+
+  const redirect = location.search
+    ? location.search.split("=")[1]
+    : "/dashboard";
 
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
@@ -42,8 +62,8 @@ const LoginScreen = () => {
     }
   }, [history, userInfo, redirect]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onClickHandler = (data) => {
+    const { email, password } = data;
     dispatch(login(email, password));
   };
 
@@ -66,14 +86,15 @@ const LoginScreen = () => {
               Email Address
             </Typography>
             <TextField
+              name="email"
               label="Enter Email"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              type="email"
+              size={"small"}
+              inputRef={register}
+              error={!!errors.email}
+              helperText={errors?.email?.message}
             />
           </Grid>
 
@@ -82,19 +103,23 @@ const LoginScreen = () => {
               Password
             </Typography>
             <TextField
+              name="password"
               label="Enter Password"
               variant="filled"
               fullWidth={true}
-              size={'small'}
-              value={password}
+              size={"small"}
+              inputRef={register}
+              error={!!errors.password}
+              helperText={errors?.password?.message}
               type="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit((data) => onClickHandler(data))}
+            >
               SIGN IN
             </Button>
           </Grid>

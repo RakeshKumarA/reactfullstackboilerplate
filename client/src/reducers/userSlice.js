@@ -1,12 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const userInfoFromStorage = localStorage.getItem("userInfo")
+  ? JSON.parse(localStorage.getItem("userInfo"))
+  : {};
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: {
     loading: false,
-    userInfo: {},
-    error: '',
+    userInfo: userInfoFromStorage,
+    error: "",
   },
   reducers: {
     user_login_request: (state) => {
@@ -22,6 +26,7 @@ export const userSlice = createSlice({
       state.error = action.payload;
     },
     user_logout: (state, action) => {
+      localStorage.removeItem("userInfo");
       return {};
     },
   },
@@ -39,16 +44,16 @@ export const login = (email, password) => async (dispatch) => {
     dispatch(user_login_request());
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     };
     const { data } = await axios.post(
-      '/api/users/login',
+      "/api/users/login",
       { email, password },
       config
     );
     dispatch(user_login_sucess(data));
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatch(user_login_failure(error.message));
   }
