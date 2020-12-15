@@ -13,7 +13,10 @@ import { CircularProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 //Modular imports
-import { registerUser } from "../reducers/registerSlice";
+import {
+  registerUser,
+  user_register_failure_cleanup,
+} from "../reducers/registerSlice";
 
 //Form Validation Libs
 import { useForm } from "react-hook-form";
@@ -60,7 +63,8 @@ const RegisterScreen = () => {
 
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.user);
-  const { loading, error, userInfo } = userLogin;
+  const { loading, userInfo } = userLogin;
+  const { error } = useSelector((state) => state.register);
   const location = useLocation();
   const history = useHistory();
 
@@ -72,7 +76,10 @@ const RegisterScreen = () => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
       history.push(redirect);
     }
-  }, [history, userInfo, redirect]);
+    return () => {
+      dispatch(user_register_failure_cleanup());
+    };
+  }, [history, userInfo, redirect, dispatch]);
 
   const onClickHandler = (data) => {
     const { name, email, password } = data;
@@ -84,8 +91,6 @@ const RegisterScreen = () => {
       <Grid item xs={2} sm={4} />
       {loading ? (
         <CircularProgress />
-      ) : error ? (
-        <Alert severity="error">{error}</Alert>
       ) : (
         <Grid item xs={8} sm={4} container direction="column" spacing={1}>
           <Grid item>
@@ -93,6 +98,11 @@ const RegisterScreen = () => {
               SIGN UP
             </Typography>
           </Grid>
+          {error ? (
+            <Grid item>
+              <Alert severity="error">{error}</Alert>
+            </Grid>
+          ) : null}
           <Grid item>
             <Typography variant="subtitle1" color="initial">
               Name

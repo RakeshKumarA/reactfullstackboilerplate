@@ -25,6 +25,10 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    user_login_failure_cleanup: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
     user_logout: (state, action) => {
       localStorage.removeItem("userInfo");
       return {};
@@ -36,6 +40,7 @@ export const {
   user_login_request,
   user_login_sucess,
   user_login_failure,
+  user_login_failure_cleanup,
   user_logout,
 } = userSlice.actions;
 
@@ -52,8 +57,13 @@ export const login = (email, password) => async (dispatch) => {
       { email, password },
       config
     );
-    dispatch(user_login_sucess(data));
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    if (data.status === 200) {
+      delete data.status;
+      dispatch(user_login_sucess(data));
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    } else {
+      throw new Error(data.message);
+    }
   } catch (error) {
     dispatch(user_login_failure(error.message));
   }
