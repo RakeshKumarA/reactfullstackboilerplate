@@ -9,6 +9,17 @@ const app = express();
 
 app.use(express.json());
 
+// Logging all HTTP Requests
+app.use((req, res, next) => {
+  logger.info(req.body);
+  let oldSend = res.send;
+  res.send = function (data) {
+    logger.info(data);
+    oldSend.apply(res, arguments);
+  };
+  next();
+});
+
 app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;

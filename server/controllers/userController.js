@@ -12,7 +12,6 @@ const authUser = async (req, res) => {
     const user = await db.query(`SELECT * FROM users where email='${email}'`);
 
     if (user.rowCount !== 0) {
-      console.log(user);
       const pwdInDb = await db.query(
         `SELECT password FROM users WHERE email = '${email}'`
       );
