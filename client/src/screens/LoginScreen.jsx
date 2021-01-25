@@ -10,10 +10,9 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { CircularProgress } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
 
 //Modular imports
-import { login, user_login_failure_cleanup } from "../reducers/userSlice";
+import { login } from "../reducers/userSlice";
 
 //Form Validation Libs
 import { useForm } from "react-hook-form";
@@ -43,7 +42,7 @@ const LoginScreen = () => {
 
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.user);
-  const { loading, error, userInfo } = userLogin;
+  const { loading, userInfo } = userLogin;
   const location = useLocation();
   const history = useHistory();
 
@@ -60,10 +59,7 @@ const LoginScreen = () => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
       history.push(redirect);
     }
-    return () => {
-      dispatch(user_login_failure_cleanup());
-    };
-  }, [history, userInfo, redirect, dispatch]);
+  }, [history, userInfo, redirect]);
 
   const onClickHandler = (data) => {
     const { email, password } = data;
@@ -82,11 +78,6 @@ const LoginScreen = () => {
               SIGN IN
             </Typography>
           </Grid>
-          {error ? (
-            <Grid item>
-              <Alert severity="error">{error}</Alert>
-            </Grid>
-          ) : null}
           <Grid item>
             <Typography variant="subtitle1" color="initial">
               Email Address

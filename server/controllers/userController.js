@@ -35,7 +35,7 @@ const authUser = async (req, res) => {
       res.json({ status: 401, message: "Email not Present" });
     }
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    res.json({ status: 401, message: error.message });
   }
 };
 
@@ -59,6 +59,7 @@ const registerUser = async (req, res) => {
       );
       const token = generateToken(results.rows[0].id);
       res.status(201).json({
+        status: 201,
         id: results.rows[0].id,
         name: results.rows[0].name,
         email: results.rows[0].email,
@@ -72,6 +73,7 @@ const registerUser = async (req, res) => {
       );
       const token = generateToken(results.rows[0].id);
       res.status(201).json({
+        status: 201,
         id: results.rows[0].id,
         name: results.rows[0].name,
         email: results.rows[0].email,
@@ -80,7 +82,7 @@ const registerUser = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json({ status: 500, message: error.message });
   }
 };
 

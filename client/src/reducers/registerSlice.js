@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { user_login_sucess } from "./userSlice";
+import { set_snackbar } from "./snackSlice";
 
 export const registerSlice = createSlice({
   name: "register",
-  initialState: {},
+  initialState: {
+    loading: false,
+    userInfo: {},
+    error: "",
+  },
   reducers: {
     user_register_request: (state) => {
       state.loading = true;
@@ -17,10 +22,6 @@ export const registerSlice = createSlice({
     user_register_failure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
-    },
-    user_register_failure_cleanup: (state) => {
-      state.loading = false;
-      state.error = null;
     },
   },
 });
@@ -45,16 +46,38 @@ export const registerUser = (name, email, password) => async (dispatch) => {
       { name, email, password },
       config
     );
-    if (data.status === 200) {
+
+    if (data.status === 201) {
       delete data.status;
       dispatch(user_register_sucess(data));
       dispatch(user_login_sucess(data));
       localStorage.setItem("userInfo", JSON.stringify(data));
+      dispatch(
+        set_snackbar({
+          snackbarOpen: true,
+          snackbarType: "success",
+          snackbarMessage: "Sucessfully Registered and logged in",
+        })
+      );
     } else {
-      throw new Error(data.message);
+      dispatch(user_register_failure(data.message));
+      dispatch(
+        set_snackbar({
+          snackbarOpen: true,
+          snackbarType: "error",
+          snackbarMessage: data.message,
+        })
+      );
     }
   } catch (error) {
     dispatch(user_register_failure(error.message));
+    dispatch(
+      set_snackbar({
+        snackbarOpen: true,
+        snackbarType: "error",
+        snackbarMessage: error.message,
+      })
+    );
   }
 };
 

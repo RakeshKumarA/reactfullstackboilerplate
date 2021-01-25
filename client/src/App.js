@@ -7,6 +7,7 @@ import PageNotFound from "./screens/PageNotFound";
 import Dashboard from "./screens/Dashboard";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import PublicRoute from "./components/routes/PublicRoute";
+import CustomSnackBar from "./components/snackbar/CustomSnackBar";
 
 const useStyles = makeStyles({
   root: {
@@ -20,6 +21,7 @@ const App = () => {
 
   return (
     <Router>
+      <CustomSnackBar />
       <div className={classes.root}>
         <main>
           <Switch>
